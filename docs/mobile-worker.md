@@ -199,8 +199,10 @@ it via parallelism overhead). **The only reliable lever is cutting files:**
   thousands of non-code files that dominate the runtime. Result: far fewer files,
   finishes sooner, and the matches are the app's own code, not library noise.
 - **`first_party_depth`** narrows further (default 2 = `com/example`; 3 =
-  `com/example/feature`), or set `package` explicitly. If no first-party smali is
-  found (heavy obfuscation), it falls back to a full scan and says so in `scope`.
+  `com/example/feature`), or set `package` explicitly (`scope` is accepted as an
+  alias — it's a natural mistake to make since the result's own scope-note field
+  is named `scope`). If no first-party smali is found (heavy obfuscation), it
+  falls back to a full scan and says so in `scope`.
 - **`timeout`** — raise it to let a large first-party codebase finish; a very
   large app's own smali can still exceed the default 300s, in which case you get
   bounded partial results and can re-run deeper or longer. The mobile operator

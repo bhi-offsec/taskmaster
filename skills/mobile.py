@@ -389,7 +389,8 @@ class MobileNucleiScan(BaseMobileSkill):
         code (androidx, kotlin, Google libs) and the bulky non-code res/ tree.
         This is the main lever; it also sharpens signal.
       * `first_party_depth` — narrow further (default 2 = com/example; 3 =
-        com/example/feature), or set `package` explicitly.
+        com/example/feature), or set `package` explicitly (`scope` is accepted
+        as an alias — matches the result's own `scope` field name).
       * `timeout` — raise it to let a large first-party codebase finish.
     Falls back to a full scan (with a note) if no first-party smali is found
     (e.g. heavy obfuscation). `concurrency`/`template_timeout` are tunable but
@@ -420,7 +421,11 @@ class MobileNucleiScan(BaseMobileSkill):
         if not kwargs.get("first_party"):
             return f"-target {source_dir!r}", None
 
-        package = kwargs.get("package") or _read_manifest_package(source_dir)
+        # 'scope' is accepted as an alias for 'package' — the result's own scope
+        # note field is named "scope", and that naming collision has already
+        # caused a caller to pass scope=<package> and have it silently ignored
+        # (fell through to the manifest-derived package instead of erroring).
+        package = kwargs.get("package") or kwargs.get("scope") or _read_manifest_package(source_dir)
         if not package:
             return f"-target {source_dir!r}", (
                 "first_party requested but no package in the manifest; scanned full tree."
